@@ -1,0 +1,9 @@
+target/
+build/
+.DS_Store
+/.amp/in/
+*.xcuserstate
+xcuserdata/
+.gradle/
+local.properties
+app/src/main/jniLibs/

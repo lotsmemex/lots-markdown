@@ -1,0 +1,25 @@
+[package]
+name = "lots-render-stub"
+version = "0.0.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+description = "Temporary front-end stub: Markdown to HTML until core/ ships its FFI."
+
+[lib]
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[dependencies]
+pulldown-cmark = { version = "0.13", default-features = false, features = ["html"] }
+pulldown-cmark-escape = "0.11"
+jni = { version = "0.21", default-features = false, optional = true }
+
+[features]
+# Android: exposes Java_com_lotsmemex_markdown_Renderer_renderHtml.
+jni = ["dep:jni"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
