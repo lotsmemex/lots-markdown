@@ -1,0 +1,7 @@
+[bindings.swift]
+module_name = "LotsMarkdownCore"
+ffi_module_name = "LotsMarkdownCoreFFI"
+
+[bindings.kotlin]
+package_name = "com.lotsmemex.markdown.core"
+cdylib_name = "lots_markdown_core"
