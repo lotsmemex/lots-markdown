@@ -32,7 +32,7 @@ apps/macos/build.sh
 open "apps/macos/build/Lots Markdown.app" --args /path/to/file.md
 ```
 
-Requires Xcode and Rust. `apps/render-stub/` is a temporary renderer until `core/` ships its FFI.
+Requires Xcode and Rust. macOS renders through `core/` (UniFFI); iOS and Android still use the temporary `apps/render-stub/`.
 
 ## License
 

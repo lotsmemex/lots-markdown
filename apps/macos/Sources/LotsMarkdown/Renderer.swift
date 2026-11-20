@@ -1,6 +1,6 @@
-// Markdown → HTML fragment. Calls the temporary apps/render-stub until core/ ships its
-// UniFFI binding; the contract (block-level data-src-start/end UTF-8 byte ranges, inert
-// document HTML) is in AGENTS.md.
+// Markdown → HTML fragment through core/'s UniFFI binding (renderHtml). The contract
+// (block-level data-src-start/end UTF-8 byte ranges over the input, inert document HTML)
+// is in AGENTS.md and core/README.md.
 
 import Foundation
 
@@ -10,12 +10,7 @@ enum Renderer {
     static let previewPrefixBytes = 2 * 1024 * 1024
 
     static func html(_ data: Data) -> String {
-        data.withUnsafeBytes { raw -> String in
-            guard let base = raw.bindMemory(to: UInt8.self).baseAddress,
-                  let out = lm_render_html(base, raw.count) else { return "" }
-            defer { lm_free(out) }
-            return String(cString: out)
-        }
+        renderHtml(markdown: String(decoding: data, as: UTF8.self))
     }
 
     /// The preview body for `data`: the whole document, or for large files a prefix cut at a
@@ -53,6 +48,11 @@ enum Renderer {
                 i = nl + 1
             }
         }
-        return best > 0 ? best : end
+        if best > 0 { return best }
+        // No usable blank line: cut at `end`, backed off to a UTF-8 character boundary so
+        // decoding adds no replacement character and offsets still match the file.
+        var cut = end
+        while cut > 0 && cut < data.count && data[data.startIndex + cut] & 0xC0 == 0x80 { cut -= 1 }
+        return cut
     }
 }
