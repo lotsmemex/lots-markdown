@@ -21,6 +21,7 @@ Status: early prototype. Stage 1 is opening and reading Markdown on all three pl
 - Open a Markdown file or a folder (`⌘O`, Finder, or the command line). Folders show a file tree (`⌘0`); right-click a file to reveal it in Finder or copy its full path.
 - Edit the source on the left and save with `⌘S`; the bytes on disk are exactly the text you see. Changes made by other apps reload automatically.
 - The rendered preview on the right follows edits and scrolling (`⌘\` to hide it). Files over 16 MB preview their first 2 MB.
+- Themes (显示 → 主题): 默认, 书卷 and 公众号 are built in. “复制当前主题并编辑…” copies the current theme into `~/Library/Application Support/Lots Markdown/Themes/`; any CSS file there becomes a theme and the preview updates as soon as you save it. A `/* name: … */` first line sets the menu name.
 - Closing the last window keeps the app running, so the next file opens without a process launch.
 
 Measurements: [docs/bench](docs/bench/).
@@ -30,6 +31,7 @@ Measurements: [docs/bench](docs/bench/).
 ```sh
 apps/macos/build.sh
 open "apps/macos/build/Lots Markdown.app" --args /path/to/file.md
+apps/macos/package-dmg.sh   # build/LotsMarkdown-<version>.dmg, ad-hoc signed, not notarized
 ```
 
 Requires Xcode and Rust. macOS renders through `core/` (UniFFI); iOS and Android still use the temporary `apps/render-stub/`.

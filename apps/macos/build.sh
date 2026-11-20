@@ -13,7 +13,7 @@ rm -rf "$BINDINGS" && mkdir -p "$BINDINGS"
 APP="build/Lots Markdown.app"
 rm -rf "$APP" && mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp Info.plist "$APP/Contents/Info.plist"
-cp ../../themes/default.css "$APP/Contents/Resources/"
+mkdir -p "$APP/Contents/Resources/Themes" && cp ../../themes/*.css "$APP/Contents/Resources/Themes/"
 # The generated LotsMarkdownCore.swift compiles into the app module, so the app calls
 # renderHtml(markdown:) without an import.
 xcrun swiftc -O -target arm64-apple-macos14 \

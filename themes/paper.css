@@ -1,0 +1,32 @@
+/* name: 书卷 */
+/* Serif reading theme on warm paper. Light and dark follow the system. */
+:root { color-scheme: light dark; --fg: #2b2620; --muted: #7a6f62; --rule: #ddd2c2; --bg: #f8f3ea; --code-bg: #efe7da; --link: #8a4b2a; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e4dccf; --muted: #a59a8b; --rule: #4a4339; --bg: #211d18; --code-bg: #2c2620; --link: #e0a27a; }
+}
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body {
+  color: var(--fg); background: var(--bg);
+  font: 18px/1.95 "Songti SC", "STSong", "Noto Serif CJK SC", Georgia, serif;
+  max-width: 38em; margin: 0 auto; padding: 3em 2em 40vh; overflow-wrap: anywhere;
+}
+h1, h2, h3, h4, h5, h6 { font-family: "Songti SC", Georgia, serif; font-weight: 700; line-height: 1.4; margin: 1.8em 0 .7em; }
+h1 { font-size: 1.8em; text-align: center; } h2 { font-size: 1.35em; } h3 { font-size: 1.15em; }
+p, ul, ol, blockquote, pre, table { margin: 0 0 1.1em; }
+p { text-align: justify; }
+a { color: var(--link); text-decoration: none; border-bottom: 1px solid currentColor; }
+code { font: .85em/1.5 ui-monospace, Menlo, monospace; background: var(--code-bg); padding: .1em .35em; border-radius: 3px; }
+pre { background: var(--code-bg); padding: 1em 1.2em; border-radius: 4px; overflow-x: auto; }
+pre code { background: none; padding: 0; font-size: 13px; }
+blockquote { color: var(--muted); font-style: italic; padding: 0 1.2em; border-left: 2px solid var(--rule); margin-left: 0; }
+table { border-collapse: collapse; display: block; overflow-x: auto; font-size: .92em; }
+th, td { border-bottom: 1px solid var(--rule); padding: .4em .8em; text-align: left; }
+img { max-width: 100%; }
+hr { border: 0; text-align: center; margin: 2.4em 0; } hr::after { content: "· · ·"; color: var(--muted); letter-spacing: .6em; }
+li > p { margin: 0; }
+li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.4em; }
+li > input[type="checkbox"] { margin: 0 .45em 0 0; }
+.footnote-definition { display: flex; gap: .45em; font-size: .88em; color: var(--muted); margin-bottom: .4em; }
+.footnote-definition p { margin: 0; }
+.lm-raw-html { white-space: pre-wrap; font: 13px/1.5 ui-monospace, Menlo, monospace; color: var(--muted); }
+.lm-truncated { color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 1em; font-size: .9em; }

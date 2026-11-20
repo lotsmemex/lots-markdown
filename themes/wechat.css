@@ -1,0 +1,34 @@
+/* name: 公众号 */
+/* Narrow column and type sizes close to a WeChat Official Account article. */
+:root { color-scheme: light dark; --fg: #333; --muted: #888; --rule: #e5e5e5; --code-bg: #f6f6f6; --accent: #07c160; --link: #576b95; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #d6d6d6; --muted: #8a8a8a; --rule: #3a3a3a; --code-bg: #262626; --accent: #3fd47f; --link: #7d90a9; }
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+  color: var(--fg); font: 16px/1.75 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; letter-spacing: .03em;
+  max-width: 578px; margin: 0 auto; padding: 1.5em 16px 40vh; overflow-wrap: anywhere;
+}
+h1 { font-size: 22px; line-height: 1.4; margin: 1em 0 .8em; }
+h2 { font-size: 18px; margin: 1.8em 0 .9em; padding-left: .6em; border-left: 4px solid var(--accent); line-height: 1.4; }
+h3 { font-size: 16px; margin: 1.5em 0 .7em; color: var(--accent); }
+h4, h5, h6 { font-size: 15px; margin: 1.2em 0 .6em; }
+p, ul, ol, blockquote, pre, table { margin: 0 0 1.2em; }
+strong { color: var(--accent); }
+a { color: var(--link); text-decoration: none; }
+code { font: .9em/1.5 ui-monospace, Menlo, monospace; background: var(--code-bg); padding: .1em .35em; border-radius: 3px; color: #c7254e; }
+pre { background: var(--code-bg); padding: .9em 1em; border-radius: 4px; overflow-x: auto; font-size: 13px; }
+pre code { background: none; padding: 0; color: inherit; }
+blockquote { color: var(--muted); background: var(--code-bg); padding: .8em 1em; border-left: 3px solid var(--rule); margin-left: 0; font-size: 15px; }
+blockquote p:last-child { margin-bottom: 0; }
+table { border-collapse: collapse; display: block; overflow-x: auto; font-size: 14px; }
+th, td { border: 1px solid var(--rule); padding: .4em .7em; } th { background: var(--code-bg); }
+img { max-width: 100%; display: block; margin: 0 auto; border-radius: 4px; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2em 0; }
+li > p { margin: 0; }
+li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.4em; }
+li > input[type="checkbox"] { margin: 0 .45em 0 0; }
+.footnote-definition { display: flex; gap: .45em; font-size: 13px; color: var(--muted); margin-bottom: .4em; }
+.footnote-definition p { margin: 0; }
+.lm-raw-html { white-space: pre-wrap; font: 13px/1.5 ui-monospace, Menlo, monospace; color: var(--muted); }
+.lm-truncated { color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 1em; font-size: .9em; }

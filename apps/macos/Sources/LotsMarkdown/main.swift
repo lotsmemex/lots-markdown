@@ -2,7 +2,7 @@
 
 import AppKit
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     static let shared = AppDelegate()
     var workspaces: [WorkspaceWindowController] = []
     private var openedAtLaunch = false
@@ -70,6 +70,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if panel.runModal() == .OK { panel.urls.forEach(open) }
     }
 
+    // MARK: Themes menu (rebuilt each time it opens, so new custom themes appear)
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        guard menu.title == "主题" else { return }
+        menu.removeAllItems()
+        let store = ThemeStore.shared
+        let current = store.current
+        var customStarted = false
+        for theme in store.themes() {
+            if theme.id.hasPrefix("custom:") && !customStarted { menu.addItem(.separator()); customStarted = true }
+            let item = menu.addItem(withTitle: theme.name, action: #selector(selectTheme(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = theme.id
+            item.state = theme == current ? .on : .off
+        }
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "复制当前主题并编辑…", action: #selector(duplicateTheme), keyEquivalent: "").target = self
+        menu.addItem(withTitle: "打开主题文件夹", action: #selector(openThemeFolder), keyEquivalent: "").target = self
+    }
+
+    @objc private func selectTheme(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String,
+              let theme = ThemeStore.shared.themes().first(where: { $0.id == id }) else { return }
+        ThemeStore.shared.select(theme)
+    }
+
+    @objc private func duplicateTheme() {
+        guard let url = ThemeStore.shared.duplicateCurrent() else { return }
+        NSWorkspace.shared.open([url], withApplicationAt: URL(fileURLWithPath: "/System/Applications/TextEdit.app"),
+                                configuration: NSWorkspace.OpenConfiguration())
+    }
+
+    @objc private func openThemeFolder() {
+        let folder = ThemeStore.shared.customFolder
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        NSWorkspace.shared.open(folder)
+    }
+
     private func makeMainMenu() -> NSMenu {
         let main = NSMenu()
         func submenu(_ title: String, _ items: [(String, Selector?, String, NSEvent.ModifierFlags)]) {
@@ -123,6 +161,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             ("显示/隐藏目录", #selector(WorkspaceWindowController.toggleFileTree(_:)), "0", .command),
             ("显示/隐藏预览", #selector(WorkspaceWindowController.togglePreview(_:)), "\\", .command),
         ])
+        let themes = NSMenu(title: "主题")
+        themes.delegate = self
+        let themesHolder = NSMenuItem(title: "主题", action: nil, keyEquivalent: "")
+        themesHolder.submenu = themes
+        main.items.last?.submenu?.addItem(.separator())
+        main.items.last?.submenu?.addItem(themesHolder)
         let window = NSMenu(title: "窗口")
         window.addItem(withTitle: "最小化", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
         let windowHolder = NSMenuItem()

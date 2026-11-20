@@ -1,3 +1,4 @@
+/* name: 默认 */
 /* Lots Markdown default reading theme. Light and dark follow the system. */
 :root { color-scheme: light dark; --fg: #1f2328; --muted: #656d76; --rule: #d0d7de; --code-bg: #f6f8fa; --link: #9a3b52; }
 @media (prefers-color-scheme: dark) {

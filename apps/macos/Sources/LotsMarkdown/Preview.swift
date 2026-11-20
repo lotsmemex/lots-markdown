@@ -14,12 +14,6 @@ final class PreviewPane: NSObject, WKNavigationDelegate {
     private let world = WKContentWorld.defaultClient
     var onFirstLoad: (() -> Void)?
 
-    static let css: String = {
-        guard let url = Bundle.main.url(forResource: "default", withExtension: "css"),
-              let css = try? String(contentsOf: url, encoding: .utf8) else { return "" }
-        return css
-    }()
-
     override init() {
         let config = WKWebViewConfiguration()
         config.defaultWebpagePreferences.allowsContentJavaScript = false
@@ -27,6 +21,15 @@ final class PreviewPane: NSObject, WKNavigationDelegate {
         super.init()
         webView.navigationDelegate = self
         webView.setValue(false, forKey: "drawsBackground")
+        NotificationCenter.default.addObserver(self, selector: #selector(themeChanged),
+                                               name: ThemeStore.didChange, object: nil)
+    }
+
+    /// Swaps the theme's style element in place: no reload, scroll position kept.
+    @objc private func themeChanged() {
+        guard loaded else { return }
+        webView.callAsyncJavaScript("document.getElementById('lm-theme').textContent = css;",
+                                    arguments: ["css": ThemeStore.shared.css], in: nil, in: world)
     }
 
     /// Renders `data` off the main thread and shows it. A file in another folder reloads the
@@ -55,7 +58,7 @@ final class PreviewPane: NSObject, WKNavigationDelegate {
         }
         self.baseURL = baseURL
         loaded = false
-        let page = "<!doctype html><html><head><meta charset=utf-8><style>\(Self.css)</style></head><body>\(body)</body></html>"
+        let page = "<!doctype html><html><head><meta charset=utf-8><style id=lm-theme>\(ThemeStore.shared.css.replacingOccurrences(of: "</style", with: "<\\/style"))</style></head><body>\(body)</body></html>"
         webView.loadHTMLString(page, baseURL: baseURL)
     }
 
@@ -78,6 +81,7 @@ final class PreviewPane: NSObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         loaded = true
+        themeChanged() // the theme may have changed while the page loaded
         if let offset = pendingScroll { pendingScroll = nil; scroll(toSourceOffset: offset) }
         bench(["event": "preview_ready", "since_start_ms": secondsSinceProcessStart() * 1000])
         onFirstLoad?()
