@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -41,6 +42,12 @@ class MainActivity : Activity() {
         }
         sourceScroll = ScrollView(this).apply { addView(source) }
         root = FrameLayout(this).apply { addView(sourceScroll) }
+        // Android 15 draws edge to edge: keep content clear of the action bar and system bars.
+        root.setOnApplyWindowInsetsListener { v, insets ->
+            val bars = insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
         setContentView(root)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
@@ -54,7 +61,7 @@ class MainActivity : Activity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu.add(0, MODE_EDIT, 0, "编辑").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.add(0, MODE_ANNOTATE, 1, "标注").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS).isEnabled = false
+        menu.add(0, MODE_ANNOTATE, 1, "标注").apply { setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS); isEnabled = false }
         menu.add(0, MODE_RENDER, 2, "渲染").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }

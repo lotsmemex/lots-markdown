@@ -16,8 +16,8 @@ ap.add_argument("app"); ap.add_argument("files", nargs="+")
 ap.add_argument("--runs", type=int, default=15); ap.add_argument("--floor")
 a = ap.parse_args()
 
-def run_app(path, textkit):
-    env = dict(os.environ, LM_BENCH="1", LM_BENCH_EXIT="1", LM_TEXTKIT="1" if textkit == 1 else "0")
+def run_app(path):
+    env = dict(os.environ, LM_BENCH="1", LM_BENCH_EXIT="1")
     err = subprocess.run([a.app, path], env=env, capture_output=True, text=True, timeout=120).stderr
     ev = {}
     for line in err.splitlines():
@@ -33,13 +33,12 @@ def run_floor():
 results, floor = {}, []
 for _ in range(a.runs):
     for f in a.files:
-        for tk in (2, 1):
-            results.setdefault((os.path.basename(f), tk), []).append(run_app(f, tk))
+        results.setdefault(os.path.basename(f), []).append(run_app(f))
         if a.floor: floor.append(run_floor())
 
 print("load average:", " ".join("%.1f" % x for x in os.getloadavg()), "| runs:", a.runs)
 if floor: print("empty AppKit window, start->frame median: %.0f ms" % statistics.median(floor))
-print("%-10s %-4s %14s %14s %10s %16s" % ("file", "tk", "start->frame", "open->frame", "render", "start->preview"))
-for (f, tk), rows in results.items():
+print("%-10s %14s %14s %10s %16s" % ("file", "start->frame", "open->frame", "render", "start->preview"))
+for f, rows in results.items():
     m = lambda k: statistics.median(r[k] for r in rows)
-    print("%-10s %-4s %11.0f ms %11.0f ms %7.0f ms %13.0f ms" % (f, tk, m("start_to_frame"), m("open_to_frame"), m("render"), m("start_to_preview")))
+    print("%-10s %11.0f ms %11.0f ms %7.0f ms %13.0f ms" % (f, m("start_to_frame"), m("open_to_frame"), m("render"), m("start_to_preview")))

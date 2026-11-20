@@ -5,7 +5,8 @@ cd "$(dirname "$0")"
 export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
 cargo build --release --manifest-path ../render-stub/Cargo.toml
 APP="build/Lots Markdown.app"
-rm -rf "$APP" && mkdir -p "$APP/Contents/MacOS"
+rm -rf "$APP" && mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+cp ../../themes/default.css "$APP/Contents/Resources/"
 cp Info.plist "$APP/Contents/Info.plist"
 xcrun swiftc -O -target arm64-apple-macos14 \
   -import-objc-header ../render-stub/lots_render_stub.h \

@@ -1,0 +1,32 @@
+/* Lots Markdown default reading theme. Light and dark follow the system. */
+:root { color-scheme: light dark; --fg: #1f2328; --muted: #656d76; --rule: #d0d7de; --code-bg: #f6f8fa; --link: #9a3b52; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e6e6e6; --muted: #9da5ae; --rule: #3a3f45; --code-bg: #24282e; --link: #e58aa0; }
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+  color: var(--fg); font: 16px/1.8 -apple-system, "PingFang SC", "Hiragino Sans GB", sans-serif;
+  max-width: 46em; margin: 0 auto; padding: 2em 1.6em 40vh; overflow-wrap: anywhere;
+}
+h1, h2, h3, h4, h5, h6 { line-height: 1.35; margin: 1.6em 0 .6em; }
+h1 { font-size: 1.9em; } h2 { font-size: 1.45em; padding-bottom: .25em; border-bottom: 1px solid var(--rule); }
+h3 { font-size: 1.2em; }
+p, ul, ol, blockquote, pre, .lm-block { margin: 0 0 1em; }
+a { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+code { font: .88em/1.5 ui-monospace, "SF Mono", Menlo, monospace; background: var(--code-bg); padding: .1em .35em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .9em 1.1em; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; font-size: 13px; }
+blockquote { color: var(--muted); padding-left: 1em; border-left: 3px solid var(--rule); margin-left: 0; }
+table { border-collapse: collapse; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--rule); padding: .35em .7em; }
+th { background: var(--code-bg); }
+img { max-width: 100%; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2em 0; }
+li > p { margin: 0; }
+.lm-raw-html { white-space: pre-wrap; font: 13px/1.5 ui-monospace, Menlo, monospace; color: var(--muted); }
+.lm-truncated { color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 1em; font-size: .9em; }
+li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.4em; }
+li > input[type="checkbox"] { margin: 0 .45em 0 0; vertical-align: -.1em; }
+.footnote-definition { display: flex; gap: .45em; font-size: .9em; color: var(--muted); margin-bottom: .4em; }
+.footnote-definition p { margin: 0; }
+sup.footnote-reference a { text-decoration: none; }

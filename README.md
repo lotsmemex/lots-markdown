@@ -16,7 +16,16 @@ Status: early prototype. Stage 1 is opening and reading Markdown on all three pl
 | `bench/` | Performance benchmarks | front end |
 | `docs/` | Specifications and design notes | both |
 
-## Build (macOS viewer prototype)
+## macOS app (stage 1)
+
+- Open a Markdown file or a folder (`⌘O`, Finder, or the command line). Folders show a file tree (`⌘0`); right-click a file to reveal it in Finder or copy its full path.
+- Edit the source on the left and save with `⌘S`; the bytes on disk are exactly the text you see. Changes made by other apps reload automatically.
+- The rendered preview on the right follows edits and scrolling (`⌘\` to hide it). Files over 16 MB preview their first 2 MB.
+- Closing the last window keeps the app running, so the next file opens without a process launch.
+
+Measurements: [docs/bench](docs/bench/).
+
+## Build (macOS)
 
 ```sh
 apps/macos/build.sh
