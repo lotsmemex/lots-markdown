@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let workspace = WorkspaceWindowController(opening: target)
         workspaces.append(workspace)
         workspace.present()
+        if let window = workspace.window { Updater.shared.decorate(window) }
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -31,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let paths = CommandLine.arguments.dropFirst().filter { !$0.hasPrefix("-") }
         paths.forEach { open(URL(fileURLWithPath: $0)) }
         if paths.isEmpty && !openedAtLaunch { openDocument(nil) }
-        NSApp.activate(ignoringOtherApps: true)
+        Updater.shared.start()
     }
 
     func application(_ sender: NSApplication, open urls: [URL]) {
@@ -43,6 +44,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !flag { openDocument(nil) }
         return true
     }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        Updater.shared.applicationWillTerminate(reopen: workspaces.map { $0.fileURL ?? $0.rootURL })
+    }
+
+    @objc func checkForUpdates(_ sender: Any?) { Updater.shared.check(report: true) }
 
     // Closing the last window keeps the app running, so the next open skips process launch.
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
@@ -122,6 +129,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             main.addItem(holder)
         }
         submenu("Lots Markdown", [
+            ("检查更新…", #selector(checkForUpdates(_:)), "", []),
+            ("", nil, "", []),
             ("隐藏 Lots Markdown", #selector(NSApplication.hide(_:)), "h", .command),
             ("", nil, "", []),
             ("退出 Lots Markdown", #selector(NSApplication.terminate(_:)), "q", .command),
