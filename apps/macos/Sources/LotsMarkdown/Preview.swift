@@ -35,12 +35,12 @@ final class PreviewPane: NSObject, WKNavigationDelegate {
     /// Renders `data` off the main thread and shows it. A file in another folder reloads the
     /// page (new base URL for relative images); otherwise only the body is replaced, which
     /// keeps the scroll position and avoids a flash.
-    func show(_ data: Data, baseURL: URL) {
+    func show(_ data: Data, kind: FileKind, baseURL: URL) {
         renderGeneration += 1
         let generation = renderGeneration
         let started = secondsSinceProcessStart()
         DispatchQueue.global(qos: .userInitiated).async {
-            let body = Renderer.previewBody(data)
+            let body = Renderer.previewBody(data, kind: kind)
             let rendered = secondsSinceProcessStart()
             DispatchQueue.main.async {
                 guard generation == self.renderGeneration else { return }
@@ -58,8 +58,34 @@ final class PreviewPane: NSObject, WKNavigationDelegate {
         }
         self.baseURL = baseURL
         loaded = false
-        let page = "<!doctype html><html><head><meta charset=utf-8><style id=lm-theme>\(ThemeStore.shared.css.replacingOccurrences(of: "</style", with: "<\\/style"))</style></head><body>\(body)</body></html>"
+        let page = "<!doctype html><html><head><meta charset=utf-8><style>\(Self.baseCSS)</style><style id=lm-theme>\(ThemeStore.shared.css.replacingOccurrences(of: "</style", with: "<\\/style"))</style></head><body>\(body)</body></html>"
         webView.loadHTMLString(page, baseURL: baseURL)
+    }
+
+    /// Layout for plain text and subtitles; themes load after it and can override it.
+    private static let baseCSS = """
+    .lm-plain{white-space:pre-wrap;overflow-wrap:anywhere;margin:0 0 1em}
+    .lm-cue{display:flex;gap:1em;margin:0 0 .7em}
+    .lm-cue-time{flex:none;font:.82em/1.9 ui-monospace,SFMono-Regular,Menlo,monospace;opacity:.55}
+    .lm-cue-text{white-space:pre-wrap;min-width:0}
+    """
+
+    /// The source byte offset at the top of the visible page, interpolated inside the block
+    /// there: the inverse of scroll(toSourceOffset:). nil before the page loads.
+    func topSourceOffset(_ done: @escaping (Int?) -> Void) {
+        guard loaded else { done(nil); return }
+        let js = """
+        const els = window.__lm || (window.__lm = Array.from(document.querySelectorAll('[data-src-start]')));
+        let lo = 0, hi = els.length - 1, hit = -1;
+        while (lo <= hi) { const mid = (lo + hi) >> 1; if (els[mid].getBoundingClientRect().top <= 16) { hit = mid; lo = mid + 1; } else hi = mid - 1; }
+        if (hit < 0) return 0;
+        const el = els[hit], s = +el.dataset.srcStart, e = +el.dataset.srcEnd, r = el.getBoundingClientRect();
+        const f = r.height > 0 ? Math.min(1, Math.max(0, (16 - r.top) / r.height)) : 0;
+        return Math.round(s + f * (e - s));
+        """
+        webView.callAsyncJavaScript(js, arguments: [:], in: nil, in: world) { result in
+            done((try? result.get()) as? Int ?? ((try? result.get()) as? NSNumber)?.intValue)
+        }
     }
 
     /// Scrolls so the block containing UTF-8 byte `offset` of the source sits at the top,

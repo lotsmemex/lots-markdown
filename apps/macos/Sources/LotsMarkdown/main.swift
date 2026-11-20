@@ -158,8 +158,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         findHolder.submenu = find
         main.addItem(findHolder)
         submenu("显示", [
-            ("显示/隐藏目录", #selector(WorkspaceWindowController.toggleFileTree(_:)), "0", .command),
-            ("显示/隐藏预览", #selector(WorkspaceWindowController.togglePreview(_:)), "\\", .command),
+            ("进入编辑", #selector(WorkspaceWindowController.toggleMode(_:)), "/", .command),
+            ("双屏编辑", #selector(WorkspaceWindowController.toggleSplit(_:)), "\\", .command),
+            ("", nil, "", []),
+            ("文件目录", #selector(WorkspaceWindowController.toggleFileTree(_:)), "0", .command),
+            ("显示全部文件", #selector(WorkspaceWindowController.toggleAllFiles(_:)), ".", [.command, .shift]),
+            ("文件内目录", #selector(WorkspaceWindowController.toggleOutline(_:)), "o", [.command, .shift]),
         ])
         let themes = NSMenu(title: "主题")
         themes.delegate = self

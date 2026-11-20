@@ -20,6 +20,17 @@ for px in 16 32 128 256 512; do
   sips -z $((px * 2)) $((px * 2)) AppIcon/icon-1024.png --out "$ICONSET/icon_${px}x${px}@2x.png" >/dev/null
 done
 iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
+# Document icons shown in Finder for the file types in Info.plist.
+xcrun swiftc -O AppIcon/make-doc-icon.swift -o build/make-doc-icon
+for kind in MD TXT SRT; do
+  build/make-doc-icon AppIcon/icon-1024.png "$kind" build/doc-1024.png
+  rm -rf "$ICONSET" && mkdir -p "$ICONSET"
+  for px in 16 32 128 256 512; do
+    sips -z $px $px build/doc-1024.png --out "$ICONSET/icon_${px}x${px}.png" >/dev/null
+    sips -z $((px * 2)) $((px * 2)) build/doc-1024.png --out "$ICONSET/icon_${px}x${px}@2x.png" >/dev/null
+  done
+  iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/Doc$kind.icns"
+done
 mkdir -p "$APP/Contents/Resources/Themes" && cp ../../themes/*.css "$APP/Contents/Resources/Themes/"
 # The generated LotsMarkdownCore.swift compiles into the app module, so the app calls
 # renderHtml(markdown:) without an import.

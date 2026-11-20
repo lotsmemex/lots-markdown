@@ -18,8 +18,33 @@
     <dict>
       <key>CFBundleTypeName</key><string>Markdown</string>
       <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>CFBundleTypeIconFile</key><string>DocMD</string>
+      <key>LSHandlerRank</key><string>Default</string>
+      <key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string></array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeName</key><string>Subtitles</string>
+      <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>CFBundleTypeIconFile</key><string>DocSRT</string>
       <key>LSHandlerRank</key><string>Alternate</string>
-      <key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string><string>public.plain-text</string></array>
+      <key>LSItemContentTypes</key><array><string>com.goodsnooze.srt</string><string>com.lotsmemex.subrip</string><string>org.w3.webvtt</string></array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeName</key><string>Plain text</string>
+      <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>CFBundleTypeIconFile</key><string>DocTXT</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>LSItemContentTypes</key><array><string>public.plain-text</string><string>public.log</string><string>public.comma-separated-values-text</string><string>public.json</string><string>public.yaml</string></array>
+    </dict>
+  </array>
+  <!-- SubRip has no system type; other apps may declare their own, which the list above also names. -->
+  <key>UTImportedTypeDeclarations</key>
+  <array>
+    <dict>
+      <key>UTTypeIdentifier</key><string>com.lotsmemex.subrip</string>
+      <key>UTTypeDescription</key><string>SubRip subtitles</string>
+      <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+      <key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>srt</string></array></dict>
     </dict>
   </array>
 </dict>
