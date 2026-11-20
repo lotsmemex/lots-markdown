@@ -13,6 +13,13 @@ rm -rf "$BINDINGS" && mkdir -p "$BINDINGS"
 APP="build/Lots Markdown.app"
 rm -rf "$APP" && mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp Info.plist "$APP/Contents/Info.plist"
+ICONSET=build/AppIcon.iconset
+rm -rf "$ICONSET" && mkdir -p "$ICONSET"
+for px in 16 32 128 256 512; do
+  sips -z $px $px AppIcon/icon-1024.png --out "$ICONSET/icon_${px}x${px}.png" >/dev/null
+  sips -z $((px * 2)) $((px * 2)) AppIcon/icon-1024.png --out "$ICONSET/icon_${px}x${px}@2x.png" >/dev/null
+done
+iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
 mkdir -p "$APP/Contents/Resources/Themes" && cp ../../themes/*.css "$APP/Contents/Resources/Themes/"
 # The generated LotsMarkdownCore.swift compiles into the app module, so the app calls
 # renderHtml(markdown:) without an import.
